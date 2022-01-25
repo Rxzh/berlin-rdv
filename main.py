@@ -2,6 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 from datetime import datetime
@@ -13,6 +16,14 @@ def find_by_text(driver, text, several=False):
     return driver.find_element("xpath","//*[contains(text(), '" + text + "')]")
 
 
+def wait_for_element_to_be_clickable(driver, element):
+    while True:
+        try:
+            element.click()
+            break
+        except:
+            sleep(1)
+
 class Bot:
     def __init__(self) -> None:
         self.main_url = "https://otv.verwalt-berlin.de/ams/TerminBuchen/wizardng?sprachauswahl=en"
@@ -21,16 +32,17 @@ class Bot:
 
     def start_browser(self):
         o = ChromeOptions()
-        o.add_argument("--headless")
+        #o.add_argument("--headless")
         s = Service(ChromeDriverManager(log_level=0).install())
         self.driver = webdriver.Chrome(service = s, options = o)
 
     def process(self):
         self.driver.get(self.main_url)
         sleep(2)
-        while len(self.driver.find_elements("xpath",'//*[@id="xi-txt-11"]/p/a/strong'))==0:
-            sleep(5)
-        self.driver.find_element("xpath",'//*[@id="xi-txt-11"]/p/a/strong').click()
+
+        element = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="xi-txt-11"]/p/a/strong')))
+        element.click()
+
         sleep(5)
         while len(self.driver.find_elements("name","gelesen"))==0:
             sleep(2)
@@ -57,7 +69,7 @@ class Bot:
         find_by_text(self.driver,"EU Blue Card / Blaue Karte EU (sect. 18b para. 2)").click()
         sleep(10)
         self.driver.find_element('name','applicationForm:managedForm:proceed').click()
-        sleep(10)
+        sleep(30)
         if len(find_by_text(self.driver,'There are currently no dates available',several=True))==1:
             print('No dates available : {}'.format(datetime.now()))
         else:
@@ -65,6 +77,8 @@ class Bot:
             ## 
             # Notify here
             ##
+            while 1:
+                continue
         self.driver.quit()
 
 
