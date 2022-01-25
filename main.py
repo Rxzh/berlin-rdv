@@ -24,6 +24,7 @@ def wait_for_element_to_be_clickable(driver, element):
         except:
             sleep(1)
 
+
 class Bot:
     def __init__(self) -> None:
         self.main_url = "https://otv.verwalt-berlin.de/ams/TerminBuchen/wizardng?sprachauswahl=en"
@@ -44,9 +45,8 @@ class Bot:
         element.click()
 
         sleep(5)
-        while len(self.driver.find_elements("name","gelesen"))==0:
-            sleep(2)
-        self.driver.find_element('name','gelesen').click()
+        element = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.NAME, 'gelesen')))
+        element.click()
         sleep(3)
         while len(self.driver.find_elements("class name","ui-button-text"))==0:
             sleep(2)
@@ -73,7 +73,7 @@ class Bot:
         if len(find_by_text(self.driver,'There are currently no dates available',several=True))==1:
             print('No dates available : {}'.format(datetime.now()))
         else:
-            print('Good')
+            print('Good : {}'.format(self.driver.current_url))
             ## 
             # Notify here
             ##
