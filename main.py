@@ -40,6 +40,7 @@ class Bot:
     def process(self):
         self.driver.get(self.main_url)
         sleep(2)
+        WebDriverWait(self.driver, 10).until(lambda d: d.execute_script('return document.readyState') == 'complete')
 
         element = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="xi-txt-11"]/p/a/strong')))
         element.click()
@@ -69,16 +70,34 @@ class Bot:
         find_by_text(self.driver,"EU Blue Card / Blaue Karte EU (sect. 18b para. 2)").click()
         sleep(10)
         self.driver.find_element('name','applicationForm:managedForm:proceed').click()
-        sleep(30)
-        if len(find_by_text(self.driver,'There are currently no dates available',several=True))==1:
-            print('No dates available : {}'.format(datetime.now()))
-        else:
-            print('Good : {}'.format(self.driver.current_url))
+        #sleep(30)
+        #if len(find_by_text(self.driver,'There are currently no dates available',several=True))==1:
+        #    print('No dates available : {}'.format(datetime.now()))
+        #else:
+        #    print('Good : {}'.format(self.driver.current_url))
             ## 
             # Notify here
             ##
-            while 1:
-                continue
+        #    while 1:
+        #        continue
+        while 1:
+            try:
+                btn_next = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.NAME, 'applicationForm:managedForm:proceed')))
+                sleep(25)
+                if len(find_by_text(self.driver,'There are currently no dates available',several=True))==1:
+                    print('No dates available : {}'.format(datetime.now()))
+                    btn_next = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.NAME, 'applicationForm:managedForm:proceed')))
+                    btn_next.click()
+                else:
+                    print('Good : {}'.format(self.driver.current_url))
+                    ## 
+                    # Notify here
+                    ##
+                    while 1:
+                        continue
+            except:
+                break
+
         self.driver.quit()
 
 
