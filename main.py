@@ -27,21 +27,27 @@ class Bot:
 
     def process(self):
         self.driver.get(self.main_url)
-        sleep(5)
+        sleep(2)
+        while len(self.driver.find_elements("xpath",'//*[@id="xi-txt-11"]/p/a/strong'))==0:
+            sleep(5)
         self.driver.find_element("xpath",'//*[@id="xi-txt-11"]/p/a/strong').click()
         sleep(5)
+        while len(self.driver.find_elements("name","gelesen"))==0:
+            sleep(2)
         self.driver.find_element('name','gelesen').click()
         sleep(3)
+        while len(self.driver.find_elements("class name","ui-button-text"))==0:
+            sleep(2)
         self.driver.find_element('class name','ui-button-text').click()
         while len(self.driver.find_elements('name','sel_staat'))==0:
             sleep(1)
         sleep(3)
         Select(self.driver.find_element('name','sel_staat')).select_by_visible_text('Peru')
-        sleep(1)
+        sleep(3)
         Select(self.driver.find_element('name','personenAnzahl_normal')).select_by_visible_text('one person')
-        sleep(1)
+        sleep(3)
         Select(self.driver.find_element('name',"lebnBrMitFmly")).select_by_visible_text("no")
-        sleep(2)
+        sleep(3)
         self.driver.find_element('name','applicationForm:managedForm:proceed').click()
         sleep(3)
         find_by_text(self.driver,"Apply for a residence title").click()
